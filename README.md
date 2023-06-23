@@ -2,7 +2,7 @@
 
 These are python bindings for `foma`, [a finite-state toolkit](https://fomafst.github.io/) developed by [Dr. Mans Hulden](https://www.colorado.edu/linguistics/mans-hulden). These bindings are a subset of the functionality of `foma`, and are a modification of the file(s) in the `python` folder in the above `foma` repo. Those file(s) are edited, expanded, cleaned up, and packaged for distribution through `pip`; the changes made are listed below. 
 
-For additional functionality, please feel free to open up an issue [on our github page](INSERT GITHUB LINK HERE) describing what you'd like to see, how this is currently accomplished in `foma`, and the reasons why you would like to see this functionality. Feel free to fork this repo and implement the changes yourself as well, and make a pull request and we'll merge it in.
+For additional functionality, please feel free to open up an issue [on our github page](https://github.com/CultureFoundryCA/foma_bindings) describing what you'd like to see, how this is currently accomplished in `foma`, and the reasons why you would like to see this functionality. Feel free to fork this repo and implement the changes yourself as well, and make a pull request and we'll merge it in.
 
 This package is maintained by [CultureFoundry](https://www.culturefoundrystudios.com/) and created in conjunction with [Dr. Miikka Silfverberg](https://linguistics.ubc.ca/profile/miikka-silfverberg/https://linguistics.ubc.ca/profile/miikka-silfverberg/).
 
