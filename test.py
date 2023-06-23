@@ -1,1 +1,0 @@
-from foma_bindings.fst import Fst
