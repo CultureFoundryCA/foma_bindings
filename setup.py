@@ -1,7 +1,4 @@
-#   Foma: a finite-state toolkit and library.
 #   Copyright © 2023 Achievement Unlocked Inc., dba CultureFoundry
-#
-#   This file is part of foma.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
