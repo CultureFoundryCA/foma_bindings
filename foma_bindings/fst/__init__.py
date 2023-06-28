@@ -74,8 +74,10 @@ class Fst:
     #region Class and Static Methods
     @classmethod
     def define(cls, definition, name):
-        """Defines an FSM constant; can be supplied regex or existing FSM."""
-        # TODO needs a docstring or needs a better docstring.
+        '''Defines an FSM constant; can be supplied regex or existing FSM.
+        This link explains the Xerox regex formalism:
+        https://github.com/CultureFoundryCA/foma/blob/master/foma/docs/simpleintro.md'''
+        # TODO needs a docstring, it's not clear what it means by "defines an FSM constant".
         name = cls.encode(name)
         if isinstance(definition, Fst):
             _ = foma.add_defined(c_void_p(cls._network_definitions.defined_handle), foma_fsm_copy(definition.fst_handle), c_char_p(name))
