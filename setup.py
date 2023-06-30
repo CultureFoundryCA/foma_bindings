@@ -36,8 +36,4 @@ setup(
     keywords=['foma', 'xfst', 'hfst', 'fst', 'fsm', 'mtfst', 'mtfsm'],
     packages=find_packages(include=['fst', 'mtfst']),
     python_requires='>=3, <4',
-    install_requires=[
-        'sys',
-        'ctypes'
-    ]
 )
