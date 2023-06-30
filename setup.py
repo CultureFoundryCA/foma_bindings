@@ -16,7 +16,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='foma_bindings',
-    version='0.1.0',
+    version='0.1.3',
     description='Python bindings for the foma finite-state technology suite',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -34,6 +34,6 @@ setup(
         'Programming Language :: Python :: 3'
     ],
     keywords=['foma', 'xfst', 'hfst', 'fst', 'fsm', 'mtfst', 'mtfsm'],
-    packages=find_packages(include=['fst', 'mtfst']),
-    python_requires='>=3, <4',
+    packages=find_packages(include=['foma_bindings', 'foma_bindings.fst', 'foma_bindings.mtfst']),
+    python_requires='>=3.10, <4',
 )
