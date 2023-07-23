@@ -35,3 +35,5 @@ Secondly, we would like to acknowledge the work of [Dr. Miikka Silfverberg](http
 - additional printing parameters have been added, such as printing with flags included
 - the files have been made ready for distribution on `pip`
 - apache copyright notices have been added to all the relevant python files
+- add query function
+- add function to get the flag diacritics
