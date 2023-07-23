@@ -19,6 +19,15 @@
 from foma_bindings import *
 from sys import maxsize
 from ctypes import c_bool
+import re
+
+# This regex matches all foma flag diacritics.
+# https://giellalt.uit.no/lang/sme/docu-sme-flag-diacritics.html
+# Flag diacritic example: @P.Name.Value@
+# Valid flag operators: P, R, D, U, C, N.
+# Value part is optional.
+MATCH_NAME = 'full_flag'
+FLAGS_REGEX = re.compile(f'(?P<{MATCH_NAME}>@[PRDUCN][.][^@.\s]+([.][^@.\s]+)?@)')
 
 class Fst:
     '''
@@ -47,6 +56,7 @@ class Fst:
 
     FST Functions:
         - get_alphabet
+        - get_flag_diacritics
         - union
         - intersect
         - minus
@@ -66,8 +76,10 @@ class Fst:
     # Bit flags for different options when printing output.
     # TODO PRINT_SPACES and TOKENIZE do not mesh well together. What to do?
     NO_FLAGS = 0
-    PRINT_SPACES = 1
-    PRINT_FLAGS = 2
+    SHOW_SPACES = 1
+    PRINT_SPACES = SHOW_SPACES
+    SHOW_FLAGS = 2
+    PRINT_FLAGS = SHOW_FLAGS
     TOKENIZE = 4
     VERBOSE = TOKENIZE | PRINT_FLAGS
 
@@ -257,6 +269,12 @@ class Fst:
     # Alias to get_alphabet since both are very different yet valid names for the same function.
     get_sigma = get_alphabet
 
+    def get_flag_diacritics(self, minimize=True):
+        '''Returns a list of all the flag diacritics in the FST.'''
+        alphabet = ' '.join(self.get_alphabet(minimize, flags=Fst.SHOW_FLAGS))
+        flag_diacritics = [match.groupdict()[MATCH_NAME] for match in FLAGS_REGEX.finditer(alphabet)]
+        return flag_diacritics
+
     def union(self, other, minimize=True):
         '''Returns the union of two FSTs.'''
         fst = Fst()
@@ -309,7 +327,7 @@ class Fst:
     def __init__(self, regex=False):
         if regex:
             self.regex = self.encode(regex)
-            self.fst_handle = foma_fsm_parse_regex(c_char_p(self.regex), c_void_p(self._network_definitions.defined_handle), c_void_p(self._function_definitions.deffhandle))
+            self.fst_handle = foma_fsm_parse_regex(c_char_p(self.regex), c_void_p(self._network_definitions.defined_handle), c_void_p(self._function_definitions.defined_handle))
             if not self.fst_handle:
                 raise ValueError("Syntax error in regex")
         else:
@@ -420,4 +438,42 @@ class Fst:
     def __iter__(self):
         return self._apply(foma_apply_upper_words, word=None, flags=Fst.NO_FLAGS)
     
+    #endregion
+    
+    #region String Matching
+
+    def query(self, stem:str, flag_diacritics:list[str] | None = None, **kwargs) -> tuple[list[str], list[str]] | None:
+        '''kwargs should be the feature names and feature values, i.e. {polarity: [POS, NEG]}, or {SUBJECT: None}. This list must be appropriately ordered and exhaustive.'''
+        # TODO make the docstring better.
+
+        # TODO make the flag diacritics under the hood
+        # TODO have a show flag diacrictics option
+        # We'll use this expression to freely insert flag diacritics into the query.
+        if flag_diacritics is not None:
+            flag_diacritics = " | ".join([f'"{flag}"' for flag in flag_diacritics])
+
+        # Build query.
+        query_builder = '{%s}' % stem
+
+        # Loop over tags and create the query.
+        for tags in kwargs.values():
+            print(tags)
+            if tags is None:
+                query_builder += '[ ? ]'
+            else:
+                tagging_options = [f'"+{tag}"' for tag in tags]
+                query_builder += f"[ {' | '.join(tagging_options)} ]"
+
+        query = f'[ {query_builder} ]'
+
+        # Freely insert flag diacritics into the query. Needed for composition.
+        if flag_diacritics is not None:
+            query += f' / [ {flag_diacritics} ]'
+
+        selector_fst = Fst(query)
+
+        # Apply query to fst and return generator of the analyses.
+        resulting_fst = selector_fst.compose(self)
+        return zip(resulting_fst.upper_words(), resulting_fst.lower_words())
+
     #endregion
