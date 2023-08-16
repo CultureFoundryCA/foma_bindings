@@ -16,7 +16,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='foma_bindings',
-    version='0.1.6',
+    version='0.1.7',
     description='Python bindings for the foma finite-state technology suite',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
