@@ -442,7 +442,7 @@ class Fst:
     
     #region String Matching
 
-    def query(self, stem:str, **kwargs) -> zip[tuple[str,str]] | None:
+    def query(self, stem:str, **kwargs) -> zip:
         '''kwargs should be the feature names and feature values, i.e. {polarity: [POS, NEG], subject: None}. This list must be appropriately ordered and exhaustive.'''
 
         # We'll use this expression to freely insert flag diacritics into the query.
