@@ -442,22 +442,17 @@ class Fst:
     
     #region String Matching
 
-    def query(self, stem:str, flag_diacritics:list[str] | None = None, **kwargs) -> tuple[list[str], list[str]] | None:
-        '''kwargs should be the feature names and feature values, i.e. {polarity: [POS, NEG]}, or {SUBJECT: None}. This list must be appropriately ordered and exhaustive.'''
-        # TODO make the docstring better.
+    def query(self, stem:str, **kwargs) -> zip[tuple[str,str]] | None:
+        '''kwargs should be the feature names and feature values, i.e. {polarity: [POS, NEG], subject: None}. This list must be appropriately ordered and exhaustive.'''
 
-        # TODO make the flag diacritics under the hood
-        # TODO have a show flag diacrictics option
         # We'll use this expression to freely insert flag diacritics into the query.
-        if flag_diacritics is not None:
-            flag_diacritics = " | ".join([f'"{flag}"' for flag in flag_diacritics])
+        flag_diacritics = " | ".join([f'"{flag}"' for flag in self.get_flag_diacritics()])
 
         # Build query.
         query_builder = '{%s}' % stem
 
         # Loop over tags and create the query.
         for tags in kwargs.values():
-            print(tags)
             if tags is None:
                 query_builder += '[ ? ]'
             else:
