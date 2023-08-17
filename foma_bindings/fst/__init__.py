@@ -442,7 +442,7 @@ class Fst:
     
     #region String Matching
 
-    def query(self, stem:str, **kwargs) -> zip:
+    def query(self, stem:str, debug = False, **kwargs) -> zip:
         '''kwargs should be the feature names and feature values, i.e. {polarity: [POS, NEG], subject: None}. This list must be appropriately ordered and exhaustive.'''
 
         # We'll use this expression to freely insert flag diacritics into the query.
@@ -464,6 +464,9 @@ class Fst:
         # Freely insert flag diacritics into the query. Needed for composition.
         if flag_diacritics is not None:
             query += f' / [ {flag_diacritics} ]'
+
+        if debug:
+            print(f'Query: {query}')
 
         selector_fst = Fst(query)
 
