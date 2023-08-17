@@ -106,6 +106,7 @@ foma_apply_words.restype = c_char_p
 foma_apply_set_print_space = foma.apply_set_print_space
 foma_apply_set_show_flags = foma.apply_set_show_flags
 foma_apply_set_space_symbol = foma.apply_set_space_symbol
+foma_apply_set_obey_flags = foma.apply_set_obey_flags
 
 # Define functions.
 defined_functions_init = foma.defined_functions_init

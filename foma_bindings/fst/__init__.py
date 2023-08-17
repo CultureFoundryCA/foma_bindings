@@ -44,6 +44,7 @@ class Fst:
     Constants for printing:
         - PRINT_SPACES
         - PRINT_FLAGS
+        - DONT_OBEY_FLAGS
         - TOKENIZE
         - VERBOSE = TOKENIZE | PRINT_FLAGS
 
@@ -80,7 +81,8 @@ class Fst:
     PRINT_SPACES = SHOW_SPACES
     SHOW_FLAGS = 2
     PRINT_FLAGS = SHOW_FLAGS
-    TOKENIZE = 4
+    DONT_OBEY_FLAGS = 4
+    TOKENIZE = 8
     VERBOSE = TOKENIZE | PRINT_FLAGS
 
     #region Class and Static Methods
@@ -183,6 +185,9 @@ class Fst:
 
         if flags & Fst.PRINT_SPACES:
             foma_apply_set_print_space(c_void_p(applyer_handle), c_bool(True))
+
+        if flags & Fst.DONT_OBEY_FLAGS:
+            foma_apply_set_obey_flags(c_void_p(applyer_handle),  c_bool(False))
         
         return applyer_handle
 
@@ -260,7 +265,7 @@ class Fst:
         return self._apply(foma_apply_words, flags=flags)
         
     # FST operations.
-    def get_alphabet(self, minimize=True, flags=NO_FLAGS):
+    def get_alphabet(self, minimize=True, flags=SHOW_FLAGS | DONT_OBEY_FLAGS):
         '''Gets the alphabet of the FST.'''
         sigma = Fst()
         sigma.fst_handle = self._foma_call_unary(foma_fsm_sigma_net, minimize)
@@ -271,7 +276,7 @@ class Fst:
 
     def get_flag_diacritics(self, minimize=True):
         '''Returns a list of all the flag diacritics in the FST.'''
-        alphabet = ' '.join(self.get_alphabet(minimize, flags=Fst.SHOW_FLAGS))
+        alphabet = ' '.join(self.get_alphabet(minimize, flags=Fst.SHOW_FLAGS | Fst.DONT_OBEY_FLAGS))
         flag_diacritics = [match.groupdict()[MATCH_NAME] for match in FLAGS_REGEX.finditer(alphabet)]
         return flag_diacritics
 
@@ -472,6 +477,6 @@ class Fst:
 
         # Apply query to fst and return generator of the analyses.
         resulting_fst = selector_fst.compose(self)
-        return zip(resulting_fst.upper_words(), resulting_fst.lower_words())
+        return resulting_fst.upper_words(), resulting_fst.lower_words()
 
     #endregion
