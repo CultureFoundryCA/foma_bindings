@@ -20,6 +20,7 @@ from foma_bindings import *
 from sys import maxsize
 from ctypes import c_bool
 import re
+import warnings
 
 # This regex matches all foma flag diacritics.
 # https://giellalt.uit.no/lang/sme/docu-sme-flag-diacritics.html
@@ -446,9 +447,53 @@ class Fst:
     #endregion
     
     #region String Matching
+    
+    def query_with_head_tags(self, stem: str, head_tags: dict[str,list[str]], tail_tags: dict[str,list[str]], debug: bool = False) -> zip:
+        '''The head- and tail-tags should be the feature names and feature values, i.e. {polarity: [POS, NEG], subject: None}. This list must be appropriately ordered and exhaustive.'''
+
+        # We'll use this expression to freely insert flag diacritics into the query.
+        flag_diacritics = " | ".join([f'"{flag}"' for flag in self.get_flag_diacritics()])
+        
+        # Build the query to send to foma.
+        query_builder = ''
+
+        # Loop over tags and create the head of the query..
+        for tags in head_tags.values():
+            if tags is None:
+                query_builder += '[ ? ]'
+            else:
+                tagging_options = [f'"{tag}+"' for tag in tags]
+                query_builder += f"[ {' | '.join(tagging_options)} ]"
+
+        # Insert stem into query.
+        query_builder += '{%s}' % stem
+
+        # Loop over tags and create the tail of the query.
+        for tags in tail_tags.values():
+            if tags is None:
+                query_builder += '[ ? ]'
+            else:
+                tagging_options = [f'"+{tag}"' if tag != '0' else '0' for tag in tags]
+                query_builder += f"[ {' | '.join(tagging_options)} ]"
+
+        query = f'[ {query_builder} ]'
+
+        # Freely insert flag diacritics into the query. Needed for composition.
+        query += ' / [ "0" ]' if len(flag_diacritics) == 0 else f' / [ {flag_diacritics} ]'
+
+        if debug:
+            print(f'Query: {query}')
+
+        selector_fst = Fst(query)
+
+        # Apply query to fst and return generator of the analyses.
+        resulting_fst = selector_fst.compose(self)
+        return resulting_fst.upper_words(), resulting_fst.lower_words()
 
     def query(self, stem:str, debug = False, **kwargs) -> zip:
         '''kwargs should be the feature names and feature values, i.e. {polarity: [POS, NEG], subject: None}. This list must be appropriately ordered and exhaustive.'''
+
+        warnings.warn("The `query` function will be deprecated in 2 months; please use `query_with_head_tags` instead.")
 
         # We'll use this expression to freely insert flag diacritics into the query.
         flag_diacritics = " | ".join([f'"{flag}"' for flag in self.get_flag_diacritics()])
