@@ -37,3 +37,8 @@ Secondly, we would like to acknowledge the work of [Dr. Miikka Silfverberg](http
 - apache copyright notices have been added to all the relevant python files
 - add query function
 - add function to get the flag diacritics
+
+### 0.1.10
+
+- add `query_with_head_tags` function to replace `query` function
+- add 2 month deprecation warning for `query` function
