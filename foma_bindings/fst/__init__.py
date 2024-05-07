@@ -462,7 +462,7 @@ class Fst:
             if tags is None:
                 query_builder += '[ ? ]'
             else:
-                tagging_options = [f'"{tag}+"' for tag in tags]
+                tagging_options = [f'"{tag}+"' if tag != '0' else '0' for tag in tags]
                 query_builder += f"[ {' | '.join(tagging_options)} ]"
 
         # Insert stem into query.
