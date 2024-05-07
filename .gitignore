@@ -5,3 +5,4 @@ build/
 *.lexc
 *.fomabin
 .vscode/
+.pypi_token

@@ -38,6 +38,9 @@ Secondly, we would like to acknowledge the work of [Dr. Miikka Silfverberg](http
 - add query function
 - add function to get the flag diacritics
 
+### 0.1.11
+- fix bug where `0` was being given as `0+` in the query function for head tags.
+
 ### 0.1.10
 
 - add `query_with_head_tags` function to replace `query` function
